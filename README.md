@@ -1,718 +1,831 @@
-import time
-import json
-import logging
-from collections import deque
 import re
-import uuid
-import random
-import itertools
+from dataclasses import dataclass, field
+from typing import List, Dict, Any, Optional, Callable
+import networkx as nx
 import matplotlib.pyplot as plt
+from IPython.display import Image, display
+import string
+import random
+import inspect
+
+# -----------------------------
+# Symbolic Rotation Function
+# -----------------------------
+def symbolic_rotation(acronym):
+rotation_map = {
+    'A':'A', 'H':'H', 'I':'I', 'N':'N', 'O':'O', 'S':'S', 'X':'X', 'Z':'Z',
+    'B':'8', 'P':'Ԁ', 'D':'ᗡ', 'R':'?', 'G':'?'
+}
+rotated = ''.join([rotation_map.get(c.upper(), '?') for c in acronym])
+return rotated
+
+# -----------------------------
+# SoftwareGod Minimal Framework
+# -----------------------------
+class KnowledgeBase:
+def __init__(self):
+self.facts = {}
+
+def add_fact(self, name, value):
+self.facts[name] = value
+
+def get_fact(self, name):
+return self.facts.get(name)
+
+class Goals:
+def __init__(self):
+self.goal_list = []
+
+def add_goal(self, goal):
+if goal not in self.goal_list:
+self.goal_list.append(goal)
+
+def get_goals(self):
+return self.goal_list
+
+class Actions:
+def __init__(self):
+self.available_actions = {}
+
+def add_action(self, name, func):
+self.available_actions[name] = func
+def add_actions(self, actions_dict):
+"""Adds multiple actions from a dictionary."""
+for action_name, action_function in actions_dict.items():
+self.add_action(action_name, action_function)
+
+def execute_action(self, name, *args, **kwargs):
+if name in self.available_actions:
+return self.available_actions[name](*args, **kwargs)
+else :
+print(f"Action ' {
+    name
+}' not found.")
+return None # Indicate action not found
+
+class Perception:
+def __init__(self):
+self.sensory_data = []
+
+def add_data(self, data):
+self.sensory_data.append(data)
+
+def get_data(self):
+return self.sensory_data
+
+class Introspection:
+def __init__(self):
+self.thoughts = []
+
+def add_thought(self, thought):
+self.thoughts.append(thought)
+
+def get_thoughts(self):
+return self.thoughts
+
+class SoftwareGod:
+def __init__(self):
+self.kb = KnowledgeBase()
+self.goals = Goals()
+self.actions = Actions()
+self.perception = Perception()
+self.introspection = Introspection()
+
+def initialize_tools(self):
+"""Register acronym-based tools"""
+self.actions.add_actions({
+    "IAT": lambda data: self._analyze_data(data),
+    "MANI": lambda: self._introspect(),
+    "DII": lambda data: [self._analyze_data(d) for d in data], # list of data
+    "API": lambda data: print("Predictive output:", f"Prediction based on {
+        data
+    }"),
+    "INVOCATION": lambda data: [
+        self._execute_investigation(data),
+        self._execute_diagnostics(data),
+        self._execute_optimization(data)
+    ],
+    "DATA": lambda tasks: print("Assigning tasks:", tasks),
+    "INPUT": lambda raw: print("Preprocessed input:", raw.upper()),
+    "OUTPUT": lambda result: self.kb.add_fact("output", result), # add the output as fact
+    "CONTROL": lambda cmd: print("Central control processing command:", cmd),
+    "TIV": lambda analysis_result: self._measure_impact(analysis_result), # New Action
+    "ZIX": lambda data: self._secure_transmission(data)
+})
+
+# -----------------------------
+# Core Methods
+# -----------------------------
+def _analyze_data(self, data):
+print(f"Analyzing data: {
+    data
+}")
+urgency = "low"
+impact = "low"
+if "critical" in data.lower() or "energy spike" in data.lower():
+urgency, impact = "high", "high"
+elif "error" in data.lower():
+urgency, impact = "high", "medium"
+elif "unusual" in data.lower():
+urgency, impact = "medium", "low"
+elif "routine" in data.lower() or "normal" in data.lower():
+urgency, impact = "low", "low"
+analysis_result = f"Analysis: ' {
+    data
+}'. Urgency: {
+    urgency
+}, Impact: {
+    impact
+}"
+self.kb.add_fact(f"analysis_ {
+    len(self.kb.facts)}", analysis_result)
+print(analysis_result)
+return analysis_result
+
+def _execute_investigation(self, analysis_result):
+print(f"Executing Investigation: {
+    analysis_result
+}")
+feedback = "Investigation complete. Source of energy spike identified. System stability returning."
+self.kb.add_fact(f"feedback_ {
+    len(self.kb.facts)}", feedback)
+print(feedback)
+
+def _execute_diagnostics(self, analysis_result):
+print(f"Executing Diagnostics: {
+    analysis_result
+}")
+feedback = "Diagnostics complete. Issues identified and scheduled."
+self.kb.add_fact(f"feedback_ {
+    len(self.kb.facts)}", feedback)
+print(feedback)
+
+def _execute_optimization(self, analysis_result):
+print(f"Executing Optimization: {
+    analysis_result
+}")
+feedback = "Optimization complete. Resource usage improved by 10%. System running efficiently."
+self.kb.add_fact(f"feedback_ {
+    len(self.kb.facts)}", feedback)
+print(feedback)
+
+def _introspect(self):
+print("Introspection: Analyzing patterns and adjusting goals...")
+# Example: add high-priority goals dynamically
+for fact in self.kb.facts.values():
+if "high" in fact.lower():
+self.goals.add_goal("address high urgency issues")
+print("Current goals:", self.goals.get_goals())
+# Example Goal setting with acronyms
+if "system error" in str(self.kb.facts.values()):
+self.goals.add_goal("prioritize system reliability")
+# if "performance bottleneck" in str(self.kb.facts.values()):
+# self.goals.add_goal("optimize code execution")
+if "output" in str(self.kb.facts.values()):
+self.goals.add_goal("review performance output")
+def _receive_external_data(self):
+"""Simulates receiving data from external streams."""
+# In a real system, this would involve API calls, file reads, etc.
+# For simulation, return a predefined list of data points
+simulated_data = [
+    "External sensor data: Unusual temperature reading detected.",
+    "Network activity: High volume of incoming requests.",
+    "System log: Routine heartbeat signal received.",
+    "External sensor data: Energy spike detected."
+]
+return simulated_data
+
+# -----------------------------
+# New tools
+# -----------------------------
+def _measure_impact(self, analysis_result):
+"""A tool to quantify the outcome of previous actions."""
+print(f"Measuring impact based on: {
+    analysis_result
+}")
+if "high" in analysis_result.lower():
+impact_report = "High-impact event. Requires immediate attention."
+self.kb.add_fact("impact_report", impact_report) # Adds a new fact
+else :
+impact_report = "Low-impact event. Monitor further."
+self.kb.add_fact("impact_report", impact_report)
+print(impact_report)
+
+def _secure_transmission(self, data):
+"""Encrypts and transforms the output for secure transfer."""
+print(f"Securing data: {
+    data
+}")
+# Basic "encryption" (not real encryption!)
+encrypted_data = data.upper().replace(" ", "_")
+transmission_report = f"Secure transmission initiated. Encrypted data: {
+    encrypted_data
+}"
+self.kb.add_fact("transmission_report", transmission_report)
+print(transmission_report)
+
+# Add a simple data processing function to the SoftwareGod class
+def _process_data(self, data):
+"""
+        Simulates basic data processing (e.g., cleaning, formatting).
+
+        Args:
+            data (str): The raw data string to process.
+
+        Returns:
+            str: The processed data string.
+        """
+print(f"Processing data: {
+    data
+}")
+# Example processing: Remove leading/trailing whitespace and convert to uppercase
+processed_data = data.strip().upper()
+print(f"Processed data: {
+    processed_data
+}")
+return processed_data
+
+
+# Add a method to SoftwareGod to simulate receiving external data
+def perceives_input(self, data_point = None):
+"""Simulates receiving data from external streams and adds to perception."""
+if data_point:
+self.perception.add_data(data_point)
+print(f"Perceived data: {
+    data_point
+}")
+else :
+simulated_data = self._receive_external_data()
+for data in simulated_data:
+self.perception.add_data(data)
+print(f"Perceived data: {
+    data
+}")
+
+# Attach the new method to the SoftwareGod class
+SoftwareGod.perceives_input = perceives_input
+
+# Add a new action to represent the "AT II" concept for focused execution
+def execute_at_ii(self, command, module_name, *args, **kwargs):
+"""
+    Simulates executing a specific module based on a focused command ("AT II").
+
+    Args:
+        command (str): The focused command (e.g., "ANALYZE", "PROCESS").
+        module_name (str): The name of the module/tool to use (e.g., "IAT", "_process_data").
+        *args: Variable length argument list for the module function.
+        **kwargs: Arbitrary keyword arguments for the module function.
+    """
+print(f"Executing AT II: Command=' {
+    command
+}', Module=' {
+    module_name
+}'")
+
+# Attempt to find the module/tool in available actions first
+if module_name in self.actions.available_actions:
+print(f"Mapping module ' {
+    module_name
+}' to an existing action.")
+try:
+result = self.actions.execute_action(module_name, *args, **kwargs)
+return result
+except Exception as e:
+print(f"Error executing action ' {
+    module_name
+}': {
+    e
+}")
+return None # Indicate execution failure
+
+# If not found in actions, check if it's a method of the SoftwareGod instance
+elif hasattr(self, module_name) and callable(getattr(self, module_name)):
+print(f"Mapping module ' {
+    module_name
+}' to an existing method.")
+method = getattr(self, module_name)
+try:
+result = method(*args, **kwargs)
+return result
+except Exception as e:
+print(f"Error executing method ' {
+    module_name
+}': {
+    e
+}")
+return None # Indicate execution failure
+else :
+print(f"Error: Module ' {
+    module_name
+}' not found or not executable within SoftwareGod.")
+return None # Indicate action not found or not executable
+
+
+# Attach the new execute_at_ii method to the SoftwareGod class
+SoftwareGod.execute_at_ii = execute_at_ii
+
+
+# Attach the _process_data method to the SoftwareGod class
+SoftwareGod._process_data = _process_data
+
+
+# -----------------------------
+# Visualize System State
+# -----------------------------
+def visualize_system_state(god: SoftwareGod):
+G = nx.DiGraph()
+
+# Core modules
+modules = ['SoftwareGod', 'Perception', 'KnowledgeBase', 'Goals', 'Actions', 'Introspection', 'ATIS'] # Added ATIS
+G.add_nodes_from(modules)
+
+# Acronym tools as nodes
+acronyms = list(god.actions.available_actions.keys())
+G.add_nodes_from(acronyms, color = 'lightgreen')
+
+# Add fact nodes
+fact_nodes = list(god.kb.facts.keys())
+G.add_nodes_from(fact_nodes, color = 'lightcoral')
+
+# Edges from SoftwareGod to modules
+G.add_edge('SoftwareGod', 'Perception', label = 'perceives_input()')
+G.add_edge('SoftwareGod', 'Introspection', label = 'introspect()')
+G.add_edge('SoftwareGod', 'Actions', label = 'execute_action()')
+G.add_edge('SoftwareGod', 'Goals', label = 'add_goal()')
+
+# Edges from Perception to Actions (analysis)
+G.add_edge('Perception', 'Actions', label = 'calls analyze_data()')
+
+# Connect acronym tools to Actions
+for acronym in acronyms:
+G.add_edge('Actions', acronym, label = 'tool')
+
+# Connect the facts to the actions that created them
+for fact_name, fact_value in god.kb.facts.items():
+# Find which action created this fact. Note: this is a simple approach.
+# In more complex systems, you'd need more robust tracking.
+if "analysis_" in fact_name: # Connect data analysis facts
+G.add_edge('IAT', fact_name, label = 'generates')
+elif "feedback_" in fact_name: # Connect feedback facts
+G.add_edge('INVOCATION', fact_name, label = 'generates') # Assuming INVOCATION leads to those feedback loops
+elif "output" in fact_name:
+G.add_edge("OUTPUT", fact_name, label = "generates")
+# ... more specific connections if there are different fact origins
+elif "impact_report" in fact_name:
+G.add_edge("TIV", fact_name, label = "generates")
+elif "transmission_report" in fact_name:
+G.add_edge("ZIX", fact_name, label = "generates")
+elif "atis_analysis_" in fact_name: # Connect ATIS analysis facts
+G.add_edge('ATIS', fact_name, label = 'generates')
+elif "routine_monitoring_" in fact_name: # Connect routine monitoring facts from ATIS
+G.add_edge('ATIS', fact_name, label = 'generates')
+elif "processed_raw_data_" in fact_name: # Connect processed data facts from _process_data
+G.add_edge('_process_data', fact_name, label = 'generates')
+
+
+# Connect from Introspection to Goals
+G.add_edge('Introspection', 'Goals', label = 'adjust_goals_based_on_introspection()')
+
+# Connect Actions/Analysis to ATIS (as the source of ATIS output)
+# Assuming IAT and potentially other analysis/action tools produce ATIS-like output
+G.add_edge('IAT', 'ATIS', label = 'generates ATIS')
+G.add_edge('INVOCATION', 'ATIS', label = 'may influence ATIS') # INVOCATION's results feed into situational awareness
+
+# Connect ATIS to Goals and Actions (as ATIS informs decisions and triggers actions)
+G.add_edge('ATIS', 'Goals', label = 'informs goals')
+G.add_edge('ATIS', 'Actions', label = 'triggers actions')
+G.add_edge('ATIS', 'KnowledgeBase', label = 'updates KB') # ATIS output is added to KB
+
+# Connect Perception to _process_data (as raw data comes from perception)
+G.add_edge('Perception', '_process_data', label = 'provides raw data')
+
+# Connect _process_data to KnowledgeBase (as processed data is stored)
+G.add_edge('_process_data', 'KnowledgeBase', label = 'stores processed data')
+
+
+# Define node positions for better visualization (manual positioning based on conceptual flow)
+pos = {
+    'SoftwareGod': (2, 2), 'Perception': (0, 3), 'KnowledgeBase': (4, 3), 'Goals': (4, 1), 'Actions': (2, 1),
+    'Introspection': (0, 1), 'ATIS': (3, 3.5), # Position ATIS conceptually between Analysis/Actions and KB/Goals
+    'IAT':(0,4), 'MANI':(0,0), 'DII':(1,4), 'API':(1,3), 'INVOCATION':(3,4),
+    'DATA':(0,2), 'INPUT':(1,2), 'OUTPUT':(3,2), 'CONTROL':(2,0),
+    'TIV': (5,4), 'ZIX': (5,0),
+    '_process_data': (1, 3.5) # Position _process_data near Perception and KnowledgeBase
+}
+
+# Add positions for fact nodes dynamically
+fact_y_offset = -0.5 # Adjust this value for spacing
+for i, fact_name in enumerate(fact_nodes):
+# Position facts below the KnowledgeBase
+pos[fact_name] = (4, 3 + (i + 1) * fact_y_offset)
+
+
+# Draw the graph
+plt.figure(figsize = (12, 8))
+# Assign colors for node styles.
+node_colors = [
+    'skyblue' if n in modules else 'lightgreen' if n in acronyms or n == '_process_data' else 'lightcoral' for n in G.nodes() # Color _process_data like an action/tool
+]
+nx.draw(G, pos, with_labels = True, node_size = 4000, node_color = node_colors, font_size = 10, arrows = True, arrowsize = 20)
+
+# Draw edge labels
+edge_labels = nx.get_edge_attributes(G, 'label')
+nx.draw_networkx_edge_labels(G, pos, edge_labels = edge_labels, font_color = 'red', font_size = 8)
+
+plt.title('SoftwareGod System Visualization')
+plt.axis('off')
+plt.show()
+
+
+# -----------------------------
+# Run Example
+# -----------------------------
+if __name__ == "__main__":
+# Create an instance of the SoftwareGod class
+god = SoftwareGod()
+
+# Initialize the system
+god.initialize_tools()
+
+# Simulate the processing of data with calls to perceives_input
+# Using the original test data from your earlier session.
+print("\n--- Processing External Data Stream ---")
+god.perceives_input() # Triggers external data stream
+
+# Testing the new processing loop with the same sequence
+print("\n--- Testing integrated flow ---")
+# Simulate perceiving some data
+god.perceives_input("Unusual energy signature detected.")
+# Have the system introspect
+god.actions.execute_action("MANI") # Corrected: Call MANI action instead of direct _introspect()
+# Retrieve knowledge, goals, actions, perception, introspection
+print("\nCurrent Knowledge Base:", god.kb.facts)
+print("Current Goals:", god.goals.get_goals())
+print("Available Actions:", god.actions.available_actions.keys())
+print("Perceived Data:", god.perception.get_data())
+print("Introspection Thoughts:", god.introspection.get_thoughts())
+# Simulate perceiving more data
+print("\n--- Processing Critical Event ---")
+god.actions.execute_action("INVOCATION", god._analyze_data("Critical energy spike detected in core system."))
+
+# Call the perceives_input method with a string triggering high urgency and medium impact analysis
+print("\n--- Processing System Error ---")
+god.actions.execute_action("INVOCATION", god._analyze_data("System error in core module detected."))
+
+# Call the perceives_input method with a string for a routine report
+print("\n--- Processing Routine Report ---")
+god.actions.execute_action("IAT", "Routine system report received. All parameters normal.")
+
+# Call the introspect method to trigger dynamic goal adjustment
+print("\n--- Performing Introspection ---")
+god.actions.execute_action("MANI")
+
+# Print the current goals to show how they have been adjusted
+print("\nCurrent Goals:", god.goals.get_goals())
+
+# Print the current knowledge base to show the recorded analysis results and feedback
+print("\nCurrent Knowledge Base:", god.kb.facts)
+# Run with additional test cases
+print("\n--- DATA as Input ---")
+god.actions.execute_action("DATA", ["task1", "task2", "task3"])
+print("\n--- Symbolic Rotation Test ---")
+for acronym in ["IAT", "API", "INVOCATION", "NATN"]:
+rotated = symbolic_rotation(acronym)
+print(f" {
+    acronym
+} rotated -> {
+    rotated
+}")
+
+# Add new test cases here
+print("\n--- Testing TIV (Measure Impact) ---")
+analysis_result_high = god._analyze_data("High urgency issue identified.")
+god.actions.execute_action("TIV", analysis_result_high)
+
+print("\n--- Testing ZIX (Secure Transmission) ---")
+data_to_secure = "Sensitive data for transmission."
+god.actions.execute_action("ZIX", data_to_secure)
+
+print("\n--- Testing DII (Distributed Input/Analysis) ---")
+distributed_data = ["Data point 1", "Data point 2 with error", "Data point 3 - critical"]
+god.actions.execute_action("DII", distributed_data)
+
+print("\n--- Testing API (Predictive Output) ---")
+predictive_input = "Predict future trends"
+god.actions.execute_action("API", predictive_input)
+
+print("\n--- Testing INPUT (Preprocess Input) ---")
+raw_input_data = "This is some raw input."
+god.actions.execute_action("INPUT", raw_input_data)
+
+print("\n--- Testing OUTPUT (Store Output as Fact) ---")
+output_result = "Final processed result."
+god.actions.execute_action("OUTPUT", output_result)
+print("\nCurrent Knowledge Base after OUTPUT:", god.kb.facts)
+
+print("\n--- Testing CONTROL (Central Control) ---")
+control_command = "initiate shutdown sequence"
+god.actions.execute_action("CONTROL", control_command)
+
+# Demonstrate the new perceives_input method
+print("\n--- Simulating External Data Reception ---")
+god.perceives_input("New data stream incoming: system status nominal.")
+god.perceives_input() # Simulate receiving multiple data points
+
+print("\n--- Current Perceived Data ---")
+print(god.perception.get_data())
+
+# Demonstrate integration of ATIS concept
+print("\n--- Integrating ATIS: Capturing and using Action Output ---")
+# Simulate an action being executed that generates ATIS-like output
+# We'll use the IAT action as an example, as it returns an analysis result.
+atis_output = god.actions.execute_action("IAT", "New critical alert received.")
+
+# Check if ATIS output was generated and use it (e.g., add to KB, trigger another action)
+if atis_output:
+print(f"\nATIS generated (Analysis Result): {
+    atis_output
+}")
+# Example ATIS integration: Add the analysis result as a new fact
+god.kb.add_fact(f"atis_analysis_ {
+    len(god.kb.facts)}", atis_output)
+print("ATIS output added to Knowledge Base.")
+
+# --- More sophisticated ATIS logic ---
+# Analyze the ATIS output for urgency and impact
+urgency_match = re.search(r"Urgency: (\w+)", atis_output)
+impact_match = re.search(r"Impact: (\w+)", atis_output)
+
+urgency = urgency_match.group(1) if urgency_match else "unknown"
+impact = impact_match.group(1) if impact_match else "unknown"
+
+print(f"ATIS Analysis - Urgency: {
+    urgency
+}, Impact: {
+    impact
+}")
+
+# Decide on a next action based on urgency and impact
+if urgency == "high" and impact == "high":
+print("High urgency and high impact detected. Prioritizing critical response (INVOCATION)...")
+god.actions.execute_action("INVOCATION", atis_output)
+god.goals.add_goal("Address critical high-impact event")
+elif urgency == "high" and impact == "medium":
+print("High urgency and medium impact detected. Scheduling diagnostics and investigation...")
+# Trigger specific parts of INVOCATION or other relevant actions
+god._execute_investigation(atis_output) # Calling internal methods for demonstration
+god._execute_diagnostics(atis_output)
+god.goals.add_goal("Investigate and diagnose high-urgency issues")
+elif urgency == "medium":
+print("Medium urgency detected. Monitoring and planning further analysis...")
+# Add a goal to monitor or schedule further analysis
+god.goals.add_goal("Monitor medium-urgency events")
+else : # Low urgency or unknown
+print("Low urgency or unknown impact. Continuing routine operations.")
+# Potentially add a fact about routine monitoring or discard the output
+god.kb.add_fact(f"routine_monitoring_ {
+    len(god.kb.facts)}", atis_output)
+
+print(f"Current Goals after ATIS processing: {
+    god.goals.get_goals()}")
+# --- End of more sophisticated ATIS logic ---
+
+print("\nCurrent Knowledge Base after ATIS integration:", god.kb.facts)
+
+# Demonstrate the "RAW" to "LIT" transformation
+print("\n--- Testing RAW to LIT Transformation ---")
+raw_sample_data = "  This is some raw data input.  "
+processed_lit_data = god._process_data(raw_sample_data)
+god.kb.add_fact(f"processed_raw_data_ {
+    len(god.kb.facts)}", processed_lit_data)
+print("\nKnowledge Base after RAW to LIT transformation:", god.kb.facts)
+
+
+# Finally, visualize the system state.
+print("\n--- Visualizing System State ---")
+visualize_system_state(god)
+
+# Removed redundant code
+
+# Task
+Summarize the key advancements made and outline potential future directions for the SoftwareGod framework.
+
+## Robust data acquisition and representation
+
+### Subtask:
+Develop flexible and extensible methods for perceiving data from diverse sources (APIs, databases, files, sensors, etc.); Implement sophisticated data parsing, cleaning, and transformation capabilities to handle various data formats and structures; Design a more expressive knowledge representation system beyond simple key-value facts. This could involve ontologies, semantic graphs, or other structured knowledge models to capture complex relationships and system states; Incorporate mechanisms for handling real-time data streams and historical data.
+
+
+## Advanced data analysis and understanding
+
+### Subtask:
+Integrate powerful analytical tools and libraries (e.g., for statistical analysis, time series analysis, anomaly detection); Incorporate machine learning and AI models for pattern recognition, prediction, and deeper understanding of system behavior; Develop methods for identifying the significance and relevance of perceived data in the context of current goals and knowledge.
+
+
+## Sophisticated goal management and reasoning
+
+### Subtask:
+Implement a hierarchical or networked goal structure to manage complex, multi-level objectives; Develop reasoning mechanisms (e.g., rule-based systems, logic programming, planning algorithms) to infer new facts, derive actions from goals, and handle uncertainty; Incorporate mechanisms for goal conflict resolution and dynamic goal adaptation based on introspection and perceived changes in the system.
+
+
+## Flexible and powerful action execution
+
+### Subtask:
+Design a robust action execution layer that can interact with a wide variety of external systems and interfaces. This might involve creating a plugin architecture for different types of actions; Implement error handling and feedback mechanisms for actions to monitor their success and impact; Develop capabilities for sequencing and orchestrating complex action workflows.
+
+
+## Enhanced introspection and learning
+
+### Subtask:
+Expand introspection to analyze the agent's own performance, reasoning processes, and the effectiveness of its actions; Implement learning mechanisms (e.g., reinforcement learning, active learning) to improve the agent's analytical capabilities, goal achievement strategies, and action selection over time; Develop methods for the agent to learn about the structure and dynamics of the systems it interacts with.
+
+
+## System mapping and modeling
+
+### Subtask:
+Develop tools and techniques for the agent to build internal models or representations of the external systems it is interacting with. This could involve learning system dynamics, identifying components, and understanding relationships; Implement methods for verifying and updating these system models based on ongoing perception and interaction.
+
+
+## User interaction and explainability
+
+### Subtask:
+Develop interfaces for users to interact with the agent, provide guidance, and understand its reasoning and actions; Incorporate explainability features to allow the agent to justify its decisions and provide insights into the systems it is mapping.
+
+
+## Scalability and performance
+
+### Subtask:
+Consider the architectural design to ensure the framework can handle large amounts of data and complex reasoning processes efficiently; Implement optimizations for performance and resource management.
+
+
+## Security and reliability
+
+### Subtask:
+Incorporate robust security measures to protect the agent and the systems it interacts with; Develop mechanisms for ensuring the reliability and fault tolerance of the agent's operations.
+
+
+## Summary:
+
+### Data Analysis Key Findings
+
+* The SoftwareGod framework's planned advancements include robust data acquisition and representation through flexible methods, sophisticated parsing, extensible knowledge representation beyond key-value stores, and handling of real-time and historical data.
+* Advanced data analysis will be integrated using libraries like pandas, NumPy, and SciPy, incorporating machine learning models (scikit-learn, TensorFlow, PyTorch) for pattern recognition and prediction, and developing methods to identify data relevance.
+* Sophisticated goal management will involve hierarchical or networked goal structures, reasoning mechanisms (rule-based systems, logic programming, planning), goal conflict resolution, and dynamic goal adaptation.
+* A flexible action execution layer is planned with a plugin architecture for interacting with diverse external systems, including error handling, feedback mechanisms, and capabilities for sequencing complex workflows.
+* Enhanced introspection and learning will allow the agent to analyze its performance and reasoning, implement learning mechanisms like reinforcement and active learning, and learn about the structure and dynamics of interacting systems.
+* System mapping and modeling will involve building internal models of external systems using techniques such as state-space and graphical models, system identification, and machine learning, with methods for verification and dynamic updating.
+* User interaction and explainability features will include interfaces for user guidance and understanding, along with explainability features to justify decisions and provide insights into system mappings.
+* Scalability and performance considerations include architectural design for handling large data and complex reasoning, performance optimizations, and resource management.
+* Security and reliability measures will be incorporated to protect the agent and systems, ensuring fault tolerance and robust operations.
+
+### Insights or Next Steps
+
+* The outlined advancements provide a comprehensive roadmap for developing a highly capable and adaptable AI framework, covering key areas from data handling to user interaction and system integrity.
+* The next steps involve translating these conceptual outlines into detailed technical specifications and beginning the implementation phase for each component, prioritizing based on dependencies and potential impact.
+
+
+# Add a new action to represent the "AT II" concept for focused execution
+def execute_at_ii(self, command, module_name, *args, **kwargs):
+"""
+    Simulates executing a specific module based on a focused command ("AT II").
+
+    Args:
+        command (str): The focused command (e.g., "ANALYZE", "PROCESS").
+        module_name (str): The name of the module/tool to use (e.g., "IAT", "_process_data").
+        *args: Variable length argument list for the module function.
+        **kwargs: Arbitrary keyword arguments for the module function.
+    """
+print(f"Executing AT II: Command=' {
+    command
+}', Module=' {
+    module_name
+}'")
+
+# Attempt to find the module/tool in available actions first
+if module_name in self.actions.available_actions:
+print(f"Mapping module ' {
+    module_name
+}' to an existing action.")
+try:
+result = self.actions.execute_action(module_name, *args, **kwargs)
+return result
+except Exception as e:
+print(f"Error executing action ' {
+    module_name
+}': {
+    e
+}")
+return None # Indicate execution failure
+
+# If not found in actions, check if it's a method of the SoftwareGod instance
+elif hasattr(self, module_name) and callable(getattr(self, module_name)):
+print(f"Mapping module ' {
+    module_name
+}' to an existing method.")
+method = getattr(self, module_name)
+try:
+result = method(*args, **kwargs)
+return result
+except Exception as e:
+print(f"Error executing method ' {
+    module_name
+}': {
+    e
+}")
+return None # Indicate execution failure
+else :
+print(f"Error: Module ' {
+    module_name
+}' not found or not executable within SoftwareGod.")
+return None # Indicate action not found or not executable
+
+
+# Attach the new execute_at_ii method to the SoftwareGod class
+SoftwareGod.execute_at_ii = execute_at_ii
+
+
+# Demonstrate the new execute_at_ii method
+print("\n--- Testing AT II Execution ---")
+
+# Create a new instance of SoftwareGod or use the existing one
+# Assuming 'god' instance exists from the main execution block (if __name__ == "__main__":)
+# If not running in the __main__ block context where 'god' is created,
+# you might need to create an instance here: god_instance = SoftwareGod()
+# For demonstration, we'll create a new instance to ensure it works standalone
+god_instance = SoftwareGod()
+god_instance.initialize_tools() # Ensure tools are initialized
+
+# Example 1: Use AT II to trigger the IAT action
+print("\n--- AT II Example 1: Triggering IAT action ---")
+god_instance.execute_at_ii("ANALYZE", "IAT", "New sensor reading.")
+
+# Example 2: Use AT II to trigger the internal _process_data method
+# NOTE: _process_data was defined in a separate cell (b9a858a4).
+# To make this example work reliably, ensure that cell is run AFTER the SoftwareGod class
+# is defined, but BEFORE this AT II demonstration cell is run, or define _process_data
+# within the main SoftwareGod class definition in cell lIYdn1woOS1n.
+# For this demonstration, we assume _process_data has been attached to the class.
+print("\n--- AT II Example 2: Triggering _process_data method ---")
+god_instance.execute_at_ii("CLEAN", "_process_data", "  Raw data input  ")
+
+# Example 3: Attempt to execute a non-existent module
+print("\n--- AT II Example 3: Attempting non-existent module ---")
+god_instance.execute_at_ii("PERFORM", "NON_EXISTENT_MODULE", "some data")
+
+# Example 4: Testing with an existing action that might raise an error if args are wrong
+# (This requires knowing how IAT might fail, for simulation purposes)
+print("\n--- AT II Example 4: Testing error handling with IAT (simulated) ---")
+# Simulate calling IAT with incorrect arguments if needed, or rely on its actual behavior
+# For this example, IAT expects a string, so passing a non-string could cause an error.
+# If IAT is robust and handles non-strings, this example might not show an error.
+# Let's call it with a valid argument again, but keep the error handling in the execute_at_ii method.
+god_instance.execute_at_ii("ANALYZE", "IAT", "Another routine report.")
+
+# Example 5: Testing with a non-callable attribute
+print("\n--- AT II Example 5: Attempting non-callable attribute ---")
+god_instance.execute_at_ii("ACCESS", "kb", "some data") # kb is an attribute, not a method
+
+# Add a simple data processing function to the SoftwareGod class
+def _process_data(self, data):
+"""
+    Simulates basic data processing (e.g., cleaning, formatting).
+
+    Args:
+        data (str): The raw data string to process.
+
+    Returns:
+        str: The processed data string.
+    """
+print(f"Processing data: {
+    data
+}")
+# Example processing: Remove leading/trailing whitespace and convert to uppercase
+processed_data = data.strip().upper()
+print(f"Processed data: {
+    processed_data
+}")
+return processed_data
+
+# Attach the new method to the SoftwareGod class dynamically
+# This allows adding methods to the class after its initial definition
+SoftwareGod._process_data = _process_data
+
+# Demonstrate the new _process_data method
+print("\n--- Testing Data Processing ---")
+
+# Create a new instance of SoftwareGod or use an existing one
+# Assuming 'god' instance exists from the main execution block (if __name__ == "__main__":)
+# If not running in the __main__ block context where 'god' is created,
+# you might need to create an instance here: god_instance = SoftwareGod()
+# For demonstration, we'll create a new instance to ensure it works standalone
+god_instance = SoftwareGod()
+god_instance.initialize_tools() # Ensure tools are initialized for the instance
+
+sample_data = "  Unstructured data with mixed case.  "
+processed_output = god_instance._process_data(sample_data)
+
+# Example of how you could then potentially add this processed data to the knowledge base
+# print("\nAdding processed data to Knowledge Base...")
+# god_instance.kb.add_fact("processed_sample_data", processed_output)
+# print("Knowledge Base after processing:", god_instance.kb.facts)
 
-# --- Enhanced EventLogger ---
-class EventLogger:
-    def __init__(self):
-        self.events = deque(maxlen=1000)
-        logging.basicConfig(
-            filename='symbolic_runtime.log',
-            level=logging.INFO,
-            format='%(asctime)s - %(component)s - %(levelname)s - %(message)s'
-        )
-
-    def log(self, timestamp, component, event_type, status, message):
-        event_id = str(uuid.uuid4())
-        event = {
-            'event_id': event_id,
-            'timestamp': timestamp,
-            'component': component,
-            'event_type': event_type,
-            'status': status,
-            'message': message
-        }
-        self.events.append(event)
-        logging.info(message, extra={'component': component})
-
-    def get_events(self):
-        return list(self.events)
-
-    def print_symbolic_logs(self):
-        print("\n--- Symbolic Event Log ---")
-        for event in self.events:
-            print(f"  [{event['timestamp']:.2f}] {event['component']:<12} {event['event_type']:<15} {event['status']:<10} {event['message']}")
-        print("--------------------------")
-
-# --- Core Agent Class ---
-class SymbolicRuntime:
-    def __init__(self, keys=None, unlock_order=None, log_file=None, intermittent_failure_rate=0.0, automatic_recovery=True, resource_limits=None):
-        self.keys = keys or {}
-        self.unlock_order = unlock_order or ['Hardware', 'Kernel', 'Applications']
-        self.applications = []
-        self.event_logger = EventLogger()
-        self.symbolic_system_structure = {}
-        self.log_file = log_file
-        self.unlock_plan = None
-        self.success_criteria = {
-            'Hardware': lambda status: status == 'Available',
-            'Kernel': lambda status, modules_loaded: status == 'Available' and modules_loaded,
-            'Applications': lambda status, apps_running: status == 'Available' and apps_running,
-        }
-        self.successful_steps = 0
-        self.failed_steps = 0
-        self.intermittent_failure_rate = intermittent_failure_rate
-        self.faults_injected = 0
-        self.recovery_performed = 0
-        self.automatic_recovery = automatic_recovery
-        self.current_state = {}
-        self.resource_limits = resource_limits or {}
-        self.dynamic_dependencies = {}
-        self.test_results = [] #For Visualization
-
-    def _log_event(self, timestamp, component, event_type, status, message):
-        self.event_logger.log(timestamp, component, event_type, status, message)
-
-    def passive_scan(self, symbolic_system):
-        """Performs passive scan, identifies structure and dependencies, and sets resource limits"""
-        print("\n🔍 Performing Passive Scan...")
-        timestamp = time.time()
-        self.symbolic_system_structure = {}
-        self.current_state = {}
-        self.dynamic_dependencies = {}  # Reset dynamic dependencies
-
-        self.symbolic_system_structure['Hardware'] = "Present"
-        self.current_state['Hardware'] = "Present"  # Set initial state
-        self._log_event(timestamp, 'Hardware', 'Discovery', 'Present', 'Hardware layer detected.')
-
-        # Check for Kernel modules
-        try:
-            if hasattr(symbolic_system, 'loaded_modules') and isinstance(symbolic_system.loaded_modules, list):
-                self.symbolic_system_structure['Kernel'] = "Modules Loaded"
-                modules_str = ", ".join(symbolic_system.loaded_modules)
-                self.current_state['Kernel'] = "Modules Loaded"
-                # Simulate dynamic dependency discovery and resource limits for modules
-                for module in symbolic_system.loaded_modules:
-                    self.dynamic_dependencies[module] = 'Hardware'  # Example dependency
-                    if module not in self.resource_limits:
-                        self.resource_limits[module] = random.randint(30, 80)  # Example resource limit
-                        self._log_event(timestamp, 'Runtime', 'ResourceLimit', 'Discovered', f"Discovered resource limit for {module}: {self.resource_limits[module]}")
-
-                self._log_event(timestamp, 'Kernel', 'Discovery', 'Modules Found', f"Kernel modules: {modules_str}")
-            else:
-                self.symbolic_system_structure['Kernel'] = "No Modules"
-                self.current_state['Kernel'] = "No Modules"
-                self._log_event(timestamp, 'Kernel', 'Discovery', 'No Modules', "No kernel modules detected.")
-        except Exception as e:
-            self.symbolic_system_structure['Kernel'] = "Error"
-            self.current_state['Kernel'] = "Error"
-            self._log_event(timestamp, 'Kernel', 'Discovery', 'Error', f"Error detecting Kernel modules: {e}")
-
-        # Check for Applications
-        if self.applications:
-            self.symbolic_system_structure['Applications'] = "Applications Found"
-            app_names = [app.name for app in self.applications]
-            apps_str = ", ".join(app_names)
-            self.current_state['Applications'] = "Applications Found"
-            # Simulate dynamic dependency discovery and resource limits for applications
-            for app in self.applications:
-                 self.dynamic_dependencies[app.name] = 'Kernel'  # Example dependency
-                 if app.name not in self.resource_limits:
-                    self.resource_limits[app.name] = random.randint(50, 100)  # Example resource limit
-                    self._log_event(timestamp, 'Runtime', 'ResourceLimit', 'Discovered', f"Discovered resource limit for {app.name}: {self.resource_limits[app.name]}")
-
-            self._log_event(timestamp, 'Applications', 'Discovery', 'Applications Found', f"Applications detected: {apps_str}")
-        else:
-            self.symbolic_system_structure['Applications'] = "No Applications"
-            self.current_state['Applications'] = "No Applications"
-            self._log_event(timestamp, 'Applications', 'Discovery', 'No Applications', "No applications detected.")
-
-        self._log_event(timestamp, 'Runtime', 'Scan', 'Complete', 'Passive scan completed.')
-        print("✅ Passive scan completed.")
-
-    def analyze_access_points(self, symbolic_system):
-        """Identifies access points, keys, and dependencies dynamically."""
-        print("\n🔑 Analyzing Access Points...")
-        timestamp = time.time()
-
-        # Check each layer in order
-        for layer in self.unlock_order:
-            required_key = self.keys.get(layer, None)
-
-            if required_key:
-                msg = f"Layer {layer} requires key: {required_key}"
-                status = "Key Available" if required_key else "Missing Key"
-                self._log_event(timestamp, layer, 'AccessPoint', status, msg)
-                print(f"🔐 {msg}")
-            else:
-                msg = f"Layer {layer} does not require a key"
-                self._log_event(timestamp, layer, 'AccessPoint', 'Open', msg)
-                print(f"✅ {msg}")
-
-            # Drill down into subcomponents (e.g., modules or applications)
-            if layer == 'Kernel':
-                modules = getattr(symbolic_system, 'loaded_modules', [])
-                for module in modules:
-                    module_msg = f"Kernel module {module} is accessible once Kernel is unlocked"
-                    self._log_event(timestamp, layer, 'AccessPoint', 'Dependent', module_msg)
-                    print(f"📦 {module_msg}")
-
-            elif layer == 'Applications':
-                apps = getattr(self, 'applications', [])
-                for app in apps:
-                    app_msg = f"Application {app.name} is accessible once Applications are unlocked"
-                    self._log_event(timestamp, layer, 'AccessPoint', 'Dependent', app_msg)
-                    print(f"🚀 {app_msg}")
-
-        self._log_event(timestamp, 'Runtime', 'AccessPointAnalysis', 'Complete', 'Access point analysis completed.')
-
-    def plan_unlock_order(self, symbolic_system):
-        """Formulates a sequential plan to unlock the system, incorporating dependencies."""
-        print("\n📝 Planning Unlock Order...")
-        timestamp = time.time()
-        unlock_plan = []
-
-        if not self.symbolic_system_structure:
-            self.passive_scan(symbolic_system)
-
-        # Add layers to the unlock plan
-        for layer in self.unlock_order:
-            required_key = self.keys.get(layer, None)
-            status = "Key Present" if required_key else "Missing Key"
-            action = "Attempt Unlock"
-            dependencies = []
-
-            if layer == 'Kernel' and 'Hardware' in self.symbolic_system_structure:
-                dependencies.append('Hardware')
-            elif layer == 'Applications' and 'Kernel' in self.symbolic_system_structure:
-                dependencies.append('Kernel')
-
-            plan_entry = {
-                'action': action,
-                'layer': layer,
-                'status': status,
-                'key_status': required_key if required_key else "Missing",
-                'dependencies': dependencies
-            }
-            unlock_plan.append(plan_entry)
-
-        # Add subcomponent actions (load modules, launch apps), incorporating dependencies
-        if 'Kernel' in self.symbolic_system_structure and self.symbolic_system_structure['Kernel'] == "Modules Loaded":
-            for module in symbolic_system.loaded_modules:
-                if module in self.dynamic_dependencies:
-                    unlock_plan.append({
-                         'action': 'Load module',
-                         'layer': 'Kernel',
-                         'module': module,
-                         'status': 'Pending',
-                         'key_status': 'N/A',
-                         'dependencies': [self.dynamic_dependencies[module]]
-                    })
-
-        if 'Applications' in self.symbolic_system_structure and self.symbolic_system_structure['Applications'] == "Applications Found":
-            for app in self.applications:
-                if app.name in self.dynamic_dependencies:
-                    unlock_plan.append({
-                         'action': 'Launch',
-                         'layer': 'Applications',
-                         'app': app.name,
-                         'status': 'Pending',
-                         'key_status': 'N/A',
-                         'dependencies': [self.dynamic_dependencies[app.name]]
-                    })
-
-        self._log_event(timestamp, 'Runtime', 'Plan', 'Complete', 'Unlock plan formulated.')
-        self.unlock_plan = unlock_plan
-        print("✅ Unlock plan formulated successfully.")
-        print("\n--- Detailed Unlock Plan ---")
-        for i, entry in enumerate(unlock_plan):
-            print(f"  Step {i + 1}:")
-            for key, value in entry.items():
-                print(f"    {key}: {value}")
-            print("---")
-
-        return unlock_plan
-
-    def symbolic_query(self, command: str):
-        """Executes a symbolic query, now with dynamic dependencies."""
-        timestamp = time.time()
-        action, *target_parts = command.split(" ", 1)
-        target = target_parts[0] if target_parts else None
-        success = False
-        status = "Unknown"
-
-        result = None
-
-        if action.lower() == "unlock" and target:
-            if random.random() < self.intermittent_failure_rate:
-                result = f"❌ Failed to unlock {target} due to intermittent issue."
-                self._log_event(timestamp, target, 'Execute', 'Failure', result)
-                status = "Unavailable"
-                self.current_state[target] = "Unavailable"
-                print(f"💻 {result}")
-                return False, result, status
-
-            result = f" {target} unlocked symbolically"
-            self._log_event(timestamp, target, 'Execute', 'Unlocked', result)
-            status = "Available"
-            self.current_state[target] = "Available"
-            success = True
-
-        elif action.lower() == "status" and target:
-            if random.random() < self.intermittent_failure_rate:
-                result = f"❌ Could not retrieve status of {target} due to intermittent issue."
-                self._log_event(timestamp, target, 'Query', 'Intermittent Failure', result)
-                status = "Unknown"
-                print(f"💻 {result}")
-                return False, result, status
-
-            result = f"Status of {target}: Available"
-            self._log_event(timestamp, target, 'Query', 'Status', result)
-            status = "Available"
-            success = True
-
-        elif action.lower() == "run" and target:
-            # Check for resource limits
-            if target in self.resource_limits:
-                resource_usage = random.randint(1, 100)  # Simulate resource usage
-                if resource_usage > self.resource_limits[target]:
-                    result = f"❌ Application {target} failed to run due to resource exhaustion (required: {resource_usage}, limit: {self.resource_limits[target]})"
-                    self._log_event(timestamp, target, 'Execute', 'ResourceExhaustion', result)
-                    status = "Failed"
-                    print(f"💻 {result}")
-                    return False, result, status
-
-            result = f"Application {target} executed"
-            self._log_event(timestamp, target, 'Execute', 'Run', result)
-            status = "Running"
-            success = True
-
-        else:
-            result = f"Unknown command: {command}"
-            self._log_event(timestamp, 'System', 'Error', 'Invalid', result)
-            status = "Invalid"
-
-        print(f"💻 {result}")
-        return success, result, status
-
-    def execute_plan(self, plan):
-        """Executes the unlock plan, handles retries and recovery, and considers dynamic dependencies."""
-        print("\n▶️ Executing Unlock Plan...")
-        results = []
-        successful_steps = 0
-        failed_steps = 0
-        modules_loaded = False
-        apps_running = False
-        recovered_steps = 0
-
-        for step in plan:
-            layer = step.get('layer')
-            action = step.get('action')
-            module = step.get('module')
-            app = step.get('app')
-            original_key = self.keys.get(layer)
-            max_retries = 2
-            retry_delay = 1
-
-            for attempt in range(max_retries + 1):
-                # -- Attempt Unlock
-                if action == 'Attempt Unlock':
-                    success, result, status = self.symbolic_query(f"unlock {layer}")
-                    results.append(result)
-
-                    if success:
-                        if layer in self.success_criteria:
-                            if layer == 'Kernel':
-                                if self.symbolic_system_structure.get('Kernel') == "Modules Loaded":
-                                    modules_loaded = True
-                                    success = self.success_criteria[layer](status, modules_loaded)
-                                else:
-                                    success = False
-                            elif layer == 'Applications':
-                                if self.symbolic_system_structure.get('Applications') == "Applications Found":
-                                    apps_running = True
-                                    success = self.success_criteria[layer](status, apps_running)
-                                else:
-                                    success = False
-                            else:
-                                success = self.success_criteria[layer](status)
-
-                        if success:
-                            successful_steps += 1
-                            self._log_event(time.time(), layer, 'Execute', 'Success', f"Step '{layer}' met success criteria after {attempt + 1} attempts.")
-                            step['status'] = "Success"
-                            break
-                        else:
-                            failed_steps += 1
-                            self._log_event(time.time(), layer, 'Execute', 'Failure', f"Step '{layer}' did not meet success criteria after {attempt + 1} attempts.")
-                            step['status'] = "Failure"
-                            if self.automatic_recovery and original_key and self.keys.get(layer) != original_key:
-                                # Simulate key recovery
-                                self.keys[layer] = original_key
-                                self._log_event(time.time(), layer, 'Recovery', 'KeyRestored', f"Key for {layer} restored to its original value. Retrying...")
-                                recovered_steps += 1
-
-                            if attempt < max_retries:
-                                print(f"   Retrying step {layer} in {retry_delay} seconds...")
-                                time.sleep(retry_delay)
-                            else:
-                                print(f"   Max retries reached for step {layer}. Moving on.")
-                                break
-
-                    else:
-                        failed_steps += 1
-                        self._log_event(time.time(), layer, 'Execute', 'Failure', f"Step '{layer}' failed. Attempt {attempt + 1} of {max_retries + 1}.")
-                        step['status'] = "Failure"
-                        if self.automatic_recovery:
-                            # Attempt recovery
-                            if original_key and self.keys.get(layer) != original_key:
-                                # Simulate key recovery
-                                self.keys[layer] = original_key
-                                self._log_event(time.time(), layer, 'Recovery', 'KeyRestored', f"Key for {layer} restored to its original value. Retrying...")
-                                recovered_steps += 1
-
-                        if attempt < max_retries:
-                            print(f"   Retrying step {layer} in {retry_delay} seconds...")
-                            time.sleep(retry_delay)
-                        else:
-                            print(f"   Max retries reached for step {layer}. Moving on.")
-                            break
-
-                # Load Module or Launch App
-                elif action in ['Load module', 'Launch']:
-                    target = module if action == "Load module" else app
-                    success, result, status = self.symbolic_query(f"{action} {target}")
-                    results.append(result)
-                    dep_met = True
-                    dep_layer = layer if action == "Load module" else "Applications"
-                    #Check and verify dynamic dependencies as a check
-                    if(self.dynamic_dependencies[target] not in self.current_state and self.current_state.get(dep_layer) != "Available"):
-                      dep_met = False
-
-                    if success and dep_met:
-                        successful_steps += 1
-                        step['status'] = "Success"
-                        if action == "Load module":
-                          modules_loaded = True #set global to true
-                        elif action == "Launch":
-                          apps_running = True #set global to true
-                        break
-
-                    else:
-                        failed_steps += 1
-                        step['status'] = "Failure"
-                        #More granular error handling can be done
-                        #We can create dependency fixes as well.
-                        if self.automatic_recovery and action == 'Launch' and status != "Available" :
-                            if dep_layer == 'Kernel':
-                                  self._log_event(time.time(), layer, 'Execute', 'Retrying', f"Reloading Kernel {layer}")
-                                  modules_loaded = True #set back
-                                  #reinject that if the user had set it before with previous runs
-                                  success, result, status = self.symbolic_query(f"{action} {target}") #try running the module after dependencies
-                                  break
-
-                        if attempt < max_retries:
-                            print(f"   Retrying step {target} in {retry_delay} seconds...")
-                            time.sleep(retry_delay)
-                        else:
-                            print(f"   Max retries reached for step {target}. Moving on.")
-                            break
-                else:
-                    results.append("Skipped")  # Handle unexpected steps
-                    step['status'] = "Skipped"
-                break
-
-        self.successful_steps = successful_steps
-        self.failed_steps = failed_steps
-        self.recovery_performed = recovered_steps
-        return results
-
-    def generate_report(self):
-        """Generates a report summarizing the simulation results."""
-        timestamp = time.time()
-        total_steps = len(self.unlock_plan)
-        successful_steps = sum(1 for step in self.unlock_plan if step['status'] == "Success")
-        failed_steps = sum(1 for step in self.unlock_plan if step['status'] == "Failure")
-
-        success_rate = (successful_steps / total_steps) * 100 if total_steps else 0
-
-        report = {
-            'Total Steps': total_steps,
-            'Successful Steps': successful_steps,
-            'Failed Steps': failed_steps,
-            'Recovery Performed': self.recovery_performed,
-            'Faults Injected': self.faults_injected,
-            'Intermittent Failure Rate': self.intermittent_failure_rate,
-            'Automatic Recovery': self.automatic_recovery,
-            'Current System State': self.current_state,
-            'Dynamic Dependencies': self.dynamic_dependencies,
-            'Resource Limits': self.resource_limits,
-            'Success Rate': f"{success_rate:.2f}%",
-            'Errors': [event['message'] for event in self.event_logger.get_events() if event['status'] == 'Error' or "Failure" in event['message']],
-            'Unlock Plan': self.unlock_plan
-        }
-
-        report_str = json.dumps(report, indent=4)
-
-        self._log_event(timestamp, 'Runtime', 'Report', 'Generated', 'Simulation report generated.')
-
-        print("\n--- Simulation Report ---")
-        print(report_str)
-
-        return report
-
-    def print_symbolic_logs(self):
-        """Prints the symbolic logs in a formatted way."""
-        self.event_logger.print_symbolic_logs()
-
-    def inject_fault(self, target, fault_type, limit=None):
-        """Simulates injecting a fault into a specific target."""
-        timestamp = time.time()
-
-        if fault_type == "KeyCorrupt":
-            if target in self.keys:
-                original_key = self.keys[target]
-                self.keys[target] = "corrupted_key"  # Simulate key corruption
-                self._log_event(timestamp, target, "FaultInjection", "KeyCorrupt", f"Key for {target} corrupted. Original key: {original_key}")
-                self.faults_injected += 1
-
-            else:
-                self._log_event(timestamp, target, "FaultInjection", "InvalidTarget", f"Cannot corrupt key for {target}: Key not found.")
-                return False
-
-        elif fault_type == "ModuleFail":
-            if target in self.applications:
-                self.applications.remove(target)
-                self._log_event(timestamp, target, "FaultInjection", "ModuleFail", f"Module {target} failed to load.")
-                self.faults_injected += 1
-            elif target in  self.keys :
-                original = self.keys.get(target)
-                self.keys[target] = "broken"
-                self._log_event(timestamp, target, "FaultInjection", "ModuleFail", f"Module {target} set as Fail.")
-                self.faults_injected += 1
-            else :
-                self._log_event(timestamp, target, "FaultInjection", "InvalidTarget", f"Invalid module for {target} to load.")
-                return False
-
-        elif fault_type == "Intermittent":
-            self.intermittent_failure_rate = 0.5  # set the intermittent failure
-            self._log_event(timestamp, "ALL", "FaultInjection", "Intermittent", f"Intermittent failures injected at {self.intermittent_failure_rate} rate.")
-            self.faults_injected += 1
-        elif fault_type == "ResourceExhaustion":
-            if target in self.resource_limits:
-               if limit:
-                    self.resource_limits[target] = int(limit) #set the resource Limit
-                    self._log_event(timestamp, "ALL", "FaultInjection", "ResourceExhaustion", f"Resource limit for {target} at  {limit}.")
-               else :
-                    print ("must have a limit")
-                    return False
-            else :
-                 return False
-            self.faults_injected += 1 #only counts with all correct params
-
-        return True
-
-    def run_interactive_console(self, symbolic_system):
-        """Runs an interactive console for manual control and exploration."""
-        print("\n--- Interactive Console ---")
-        print("Available commands: scan, access, plan, execute, fault, recover, report, logs, exit, generate_test_cases, run_workload, visualize")
-
-        while True:
-            command = input("Enter command: ").strip()
-
-            if command == "scan":
-                self.passive_scan(symbolic_system)
-            elif command == "access":
-                self.analyze_access_points(symbolic_system)
-            elif command == "plan":
-                self.plan_unlock_order(symbolic_system)
-            elif command == "execute":
-                if self.unlock_plan:
-                    self.execute_plan(self.unlock_plan)
-                else:
-                    print("Error: No unlock plan available. Run 'plan' first.")
-            elif command.startswith("fault"):
-                try:
-                    parts = command.split(" ")
-                    if len(parts) >= 3:
-                        _, target, fault_type, *extra_params = parts
-                        limit = None #set as empty, assume it may happen.
-                        if fault_type == "Intermittent":
-                            self.inject_fault(target, fault_type)
-                            print("Intermittent fault injection active.")
-
-                        elif fault_type == "ResourceExhaustion":
-                             if len(parts) > 3 :
-                                 limit = parts[3]
-                                 self.inject_fault(target, fault_type, limit)
-
-                             else:
-                                 print("Invalid fault command. For ResourceExhaustion  command requires a limit. Ex: fault FM ResourceExhaustion 75")
-                                 continue
-
-                             print(f"ResourceExhaustion fault for {target} added")
-                        else:
-                            self.inject_fault(target, fault_type)
-                            print("Fault injected.")
-                    else:
-                        print("Invalid fault command. Usage: fault <target> <fault_type>")
-                except ValueError as e:
-                    print(f"Error parsing fault command: {e}")
-                    print("Fault Injection: Usage: fault <target> <fault_type> or fault <target> <ResourceExhaustion> <limit>")
-
-            elif command == "report":
-                self.generate_report()
-            elif command == "logs":
-                self.print_symbolic_logs()
-            elif command == "exit":
-                print("Exiting console.")
-                break
-            elif command == "recover":
-                 # Simple automated recovery - re-run the plan
-                if self.unlock_plan:
-                    print("Attempting automated recovery by re-executing the plan...")
-                    self.recovery_performed = 1 #track how many times it was called
-                    self.execute_plan(self.unlock_plan) # execute_plan() handles retries
-                else:
-                    print("Error: No unlock plan available. Run 'plan' first.")
-
-            elif command == "reset":
-                #Resets the simulation
-                self.recovery_performed = 0
-                self.faults_injected = 0
-                self.intermittent_failure_rate = 0.0
-                self.keys = {
-                    'Hardware': 'hwkey',
-                    'Kernel': 'kkey',
-                    'Applications': 'appkey'
-                }
-                print("Simulation reset to initial state.")
-            elif command.startswith("generate_test_cases"):
-                try:
-                    parts = command.split(" ")
-                    selected_fault_types = []
-                    selected_targets = []
-                    if len(parts) > 1:
-                        fault_params = parts[1].split(",") #split by comma
-                        for fault_param in fault_params:
-                            if ":" in fault_param:
-                                fault_type, target_limit = fault_param.split(":", 1) #split only once to preserve limit value
-                                if fault_type == "ResourceExhaustion":
-                                    target, limit = target_limit.split(":")
-                                    #self.resource_limits[target] = limit  #add a resource limit for test cases.
-                                    self.inject_fault(target, fault_type, limit) #Inject the Resource Command during generation
-                                selected_fault_types.append(fault_type)
-                            else:
-                                selected_fault_types.append(fault_param)
-
-                        if len(parts) > 2 :
-                            selected_targets = parts[2].split(",")
-                    self.generate_test_cases(symbolic_system, selected_fault_types, selected_targets)
-                except Exception as e:
-                      print(f"generate_test_cases command error {e}")
-            elif command.startswith("run_workload"):
-                try:
-                        _, workload_type = command.split(" ")
-                        self.run_workload(workload_type)
-                except ValueError:
-                        print("Invalid workload command. Usage: run_workload <workload_type>")
-
-            elif command == "visualize":
-                self.generate_visualization() #visualize
-            else:
-                print("Unknown command. See available commands: scan, access, plan, execute, fault, recover, report, logs, exit, generate_test_cases, run_workload")
-
-    def run_workload(self, workload_type):
-      """
-      Simulate different user workloads.
-      """
-      print(f"\n--- Running Workload: {workload_type} ---")
-      timestamp = time.time()
-      if workload_type == "HighLoad":
-          #Simulate high CPU and memory usage, and try to run apps
-          success, result, status = self.symbolic_query(f"run FileManager")
-          self._log_event(timestamp, 'Workload', 'Execute', status, result)
-          success, result, status = self.symbolic_query(f"run NetworkMonitor")
-          self._log_event(timestamp, 'Workload', 'Execute', status, result)
-
-      elif workload_type == "Normal":
-          #Simulate normal usage with some tasks
-          success, result, status = self.symbolic_query(f"status Kernel")
-          self._log_event(timestamp, 'Workload', 'Query', status, result)
-
-      self._log_event(timestamp, 'Workload', 'Complete', 'Status', f"Workload '{workload_type}' completed.")
-
-    def generate_test_cases(self, symbolic_system, selected_fault_types=None, selected_targets=None):
-      """Generates and runs automated test cases with specified fault scenarios."""
-      print("\n--- Generating and Running Automated Test Cases ---")
-      fault_types = ["KeyCorrupt", "ModuleFail", "Intermittent", "ResourceExhaustion"]
-      targets = list(self.keys.keys()) + [app.name for app in self.applications]
-      if (selected_targets):
-         targets = selected_targets
-      if (selected_fault_types):
-         fault_types = selected_fault_types #["KeyCorrupt", "ModuleFail", "Intermittent", "ResourceExhaustion"]
-
-      #Generate a test if target resource isn't defined
-      for i in range (len(fault_types)) :
-         test= fault_types[i]
-
-         if "ResourceExhaustion" in test and "FileManager" not in targets and "NetworkMonitor" not in targets :
-           print ("Must include a target when specifying resources. For reference, these are your available targets")
-           print (self.resource_limits)
-           print ("Skipping: ")
-           print(test)
-           try :
-              fault_types.remove(test) #prevent the crash if target is not set correctly
-           except ValueError as e:
-               print (f"Error is present with the test, continuing anyway")
-
-      test_cases = list(itertools.product(fault_types, targets)) #list(set(list(itertools.product(fault_types, targets))))
-      #Adding error handling to ensure that no key is null
-      test_cases = [(ft,t) for (ft,t) in test_cases if ft and t]
-      test_results = []
-      for i, (fault_type, target) in enumerate(test_cases):
-          print(f"\n--- Test Case {i + 1}/{len(test_cases)}: Fault={fault_type}, Target={target} ---")
-
-          # Reset simulation state before each test case
-          self.recovery_performed = 0
-          self.faults_injected = 0
-          self.intermittent_failure_rate = 0.0
-          self.keys = {
-            'Hardware': 'hwkey',
-            'Kernel': 'kkey',
-            'Applications': 'appkey'
-          }
-
-          # Re-run passive scan and plan unlock order
-          self.passive_scan(symbolic_system)
-          unlock_plan = self.plan_unlock_order(symbolic_system)
-
-          # Inject the fault
-          limit = 100 #hard set so fault injection will have a target
-          if (fault_type == "ResourceExhaustion"):
-            if (target in self.resource_limits):
-               fault_success = self.inject_fault(target, fault_type, limit)
-            else: #skip if inject fails (target resource does not exist)
-              continue
-          else :
-              fault_success = self.inject_fault(target, fault_type)
-
-          if(fault_success) :
-                # Execute Plan with Fault
-              results = self.execute_plan(unlock_plan)
-
-              # Generate Report
-              report = self.generate_report()
-              test_results.append(report)
-
-      self.print_test_summary(test_results)
-
-    def print_test_summary(self, test_results):
-        print("\n--- Test Summary ---")
-        total_test_cases = len(test_results)
-        successful_test_cases = 0
-
-        for i, report in enumerate(test_results):
-            print(f"\n--- Test Case {i + 1}/{total_test_cases} ---")
-            print(f"Faults Injected: {report['Faults Injected']}")
-            print(f"Recovery Performed: {report['Recovery Performed']}")
-            print(f"Success Rate: {report['Success Rate']}")
-
-            if report['Success Rate'] == "100.00%":
-                successful_test_cases += 1
